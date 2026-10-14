@@ -1,0 +1,49 @@
+{
+  "name": "shinobi-office",
+  "version": "0.8.0",
+  "description": "Shinobi Office \u2014 a 3D ninja-village virtual office where your Hermes Agent profiles work, roam and spar. Hermes Desktop plugin + self-hostable web demo.",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.mjs plugin",
+    "build:web": "node scripts/build.mjs web",
+    "build:all": "node scripts/build.mjs all",
+    "build:harness": "node scripts/build.mjs harness --generic",
+    "build:harness-dist": "node scripts/build.mjs plugin --generic && node scripts/build.mjs harness-dist --generic",
+    "check": "node scripts/check-imports.mjs dist/plugin.js",
+    "qa:plugin": "npm run build:harness-dist && node scripts/qa-plugin.mjs",
+    "qa:3d": "node scripts/build.mjs web --generic && node scripts/qa-3d.mjs",
+    "screenshots": "node scripts/build.mjs web --generic && node scripts/shot.mjs",
+    "serve:web": "node scripts/serve.mjs web",
+    "install:plugin": "npm run build && bash scripts/install.sh"
+  },
+  "keywords": [
+    "hermes",
+    "hermes-agent",
+    "hermes-desktop",
+    "plugin",
+    "three.js",
+    "virtual-office",
+    "ai-agents",
+    "ninja"
+  ],
+  "author": "Shinobi Office contributors",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "playwright": "1.57",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bryanperdana/shinobi-office.git"
+  }
+}

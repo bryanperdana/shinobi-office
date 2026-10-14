@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.DS_Store
+harness/harness.js
+web/app.js
+.qa/
+src/config.local.js
+*.local.js

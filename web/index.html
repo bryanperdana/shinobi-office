@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Shinobi Office — 3D virtual office demo for Hermes agents</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --ui-bg:#14161c; --ui-card:#1d2029; --ui-line:#2c3040; --ui-text:#e9e7e2; --ui-mute:#9aa0ad;
+    --blue:#3B82F6; --teal:#14B8A6; --amber:#F59E0B; --red:#EF4444; --green:#22C55E; --violet:#A78BFA; --gray:#94A3B8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#0f1116;color:var(--ui-text);font-family:ui-rounded,"SF Pro Rounded","Avenir Next",system-ui,sans-serif}
+  .note{max-width:1440px;margin:18px auto 0;padding:0 20px;color:var(--ui-mute);font-size:13px}
+  .note b{color:#ffd28a}
+  .app{max-width:1440px;margin:12px auto;border:1px solid var(--ui-line);border-radius:14px;overflow:hidden;background:var(--ui-bg);display:grid;grid-template-columns:56px 1fr 320px;grid-template-rows:52px 640px 120px}
+  .rail{grid-column:1;grid-row:1/4;background:#101218;border-right:1px solid var(--ui-line);display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:14px}
+  .rail i{width:28px;height:28px;border-radius:8px;background:#232735;display:block}
+  .rail i.on{background:linear-gradient(135deg,#ff8a3d,#e2557a);box-shadow:0 0 0 2px #ffb27a55}
+  .top{grid-column:2/4;grid-row:1;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--ui-line)}
+  .top h1{font-size:16px;margin:0;font-weight:800}
+  .top h1 span{color:var(--ui-mute);font-weight:600}
+  .chip{font-size:12px;padding:5px 10px;border-radius:999px;background:#202432;border:1px solid var(--ui-line);display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+  .sp{flex:1}
+  .btn{font:inherit;font-size:12px;font-weight:700;color:var(--ui-text);background:#262b3a;border:1px solid var(--ui-line);border-radius:8px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+  .btn.pri{background:linear-gradient(135deg,#ff8a3d,#e2557a);border-color:transparent;color:#fff}
+  #stage{grid-column:2;grid-row:2;position:relative;overflow:hidden;background:#0b0c10}
+  .insp{grid-column:3;grid-row:2/4;border-left:1px solid var(--ui-line);background:var(--ui-card);padding:16px;display:flex;flex-direction:column;gap:12px;font-size:13px;overflow:auto}
+  #insp-body{display:flex;flex-direction:column;gap:12px}
+  .insp .hd{display:flex;gap:12px;align-items:center}
+  .insp .av{width:52px;height:52px;border-radius:14px;background:#FFD9B5;border:3px solid;position:relative;overflow:hidden}
+  .insp .av span{position:absolute;left:0;right:0;top:0;height:40%}
+  .insp h2{margin:0;font-size:17px}
+  .insp .role,.muted{color:var(--ui-mute);font-size:12px}
+  .pill{display:inline-flex;font-weight:800;font-size:12px;padding:4px 10px;border-radius:999px}
+  .kv{display:grid;grid-template-columns:90px 1fr;gap:4px 8px;font-size:12px}
+  .kv span:nth-child(odd){color:var(--ui-mute)}
+  .ro{font-size:11px;color:var(--ui-mute);background:#1a1d27;border:1px dashed var(--ui-line);padding:8px;border-radius:8px;line-height:1.45}
+  .sec{border-top:1px solid var(--ui-line);padding-top:10px}
+  .sec h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ui-mute)}
+  #ctl{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px;font-size:11px;color:var(--ui-mute)}
+  #ctl label{display:flex;flex-direction:column;gap:2px}
+  #ctl select{font:inherit;font-size:12px;background:#262b3a;color:var(--ui-text);border:1px solid var(--ui-line);border-radius:6px;padding:3px}
+  .demo-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .feed{grid-column:2;grid-row:3;border-top:1px solid var(--ui-line);padding:10px 16px;font-size:12px;overflow:hidden;background:#12141b}
+  .feed h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ui-mute)}
+  .feed .row{display:flex;gap:10px;padding:2px 0;color:#cfd3dc}
+  .feed .t{color:var(--ui-mute);width:58px;flex:none;font-variant-numeric:tabular-nums}
+  /* in-scene tags */
+  .sho-tag{position:absolute;left:0;top:0;pointer-events:auto;background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font:inherit;will-change:transform}
+  .sho-name{display:inline-flex;align-items:center;gap:5px;background:#FFF8EAee;color:#2B1B12;border:2px solid #2B1B12;border-radius:999px;padding:2px 8px 2px 6px;font-size:11px;white-space:nowrap;box-shadow:0 2px 0 #2B1B12}
+  .sho-name b{font-weight:900}
+  .sho-name em{font-style:normal;font-weight:700;color:#7A4A2A;font-size:10px}
+  .sho-dot{width:8px;height:8px;border-radius:50%;display:inline-block;border:1.5px solid #2B1B12}
+  .sho-bub{min-width:26px;height:24px;padding:0 6px;display:grid;place-items:center;background:#fff;color:var(--c);border:2px solid #2B1B12;border-radius:12px;font-weight:900;font-size:13px;box-shadow:0 2px 0 #2B1B12}
+  .sho-tag.on .sho-name{background:#FFD28A}
+  .sho-tag:focus-visible{outline:2px solid #FFD28A;outline-offset:3px;border-radius:12px}
+  .hint{position:absolute;right:10px;bottom:10px;font-size:11px;color:#2B1B12;background:#FFF8EAcc;border:1.5px solid #2B1B12;border-radius:8px;padding:4px 8px;pointer-events:none}
+  section.sheet{max-width:1440px;margin:22px auto;padding:0 20px}
+  section.sheet h2{font-size:15px;margin:0 0 10px}
+  .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12.5px;color:#cfd3dc}
+  .rules div{background:#171a22;border:1px solid var(--ui-line);border-radius:10px;padding:10px 12px;line-height:1.45}
+  .rules b{color:#ffd28a}
+</style>
+</head>
+<body>
+<p class="note"><b>SHINOBI OFFICE · DEMO</b> · 3D virtual office for <a href="https://github.com/NousResearch/hermes-agent" style="color:#ffd28a">Hermes Agent</a> profiles · all assets original &amp; procedural (three.js, toon shading) · <b>sample data</b>: in the Hermes Desktop plugin statuses come only from real Hermes signals · drag = rotate 360°, scroll = zoom, click a laptop = see its screen.</p>
+
+<div class="app" id="app">
+  <nav class="rail"><i></i><i></i><i class="on" title="Virtual Office"></i><i></i><i></i></nav>
+  <header class="top">
+    <h1>Virtual Office <span>· Shinobi HQ</span></h1>
+    <span class="chip">🟢 1 bekerja</span><span class="chip">🔵 1 berpikir</span><span class="chip">🟠 1 approval</span><span class="chip">⚪ 3 idle (jalan-jalan)</span>
+    <span class="sp"></span>
+    <button class="btn" id="btn-view">🎥 Ganti sudut</button>
+    <button class="btn" id="btn-night">☀︎ / ☾</button>
+    <button class="btn">📜 Misi · 4</button>
+    <button class="btn pri">🔔 Gong · 1</button>
+  </header>
+  <main id="stage"><div class="hint">drag: putar · scroll: zoom · klik karakter: detail</div></main>
+  <aside class="insp">
+    <div id="insp-body"></div>
+    <div class="sec"><h3>Demo kontrol (contoh data)</h3>
+      <div id="ctl"></div>
+      <div class="demo-btns"><button class="btn" id="btn-spar">🥋 Mulai sparring</button><button class="btn" id="btn-genin">🥷 Panggil genin</button></div>
+      <p class="muted" style="margin:8px 0 0">Ubah status agent yang sedang sparring ke <code>working</code> → dia langsung shunshin (poof) kembali ke meja.</p>
+    </div>
+  </aside>
+  <footer class="feed"><h3>Activity feed</h3><div id="feed-rows"></div></footer>
+</div>
+
+<section class="sheet">
+  <h2>Aturan perilaku · Behaviour rules</h2>
+  <div class="rules">
+    <div><b>Status real selalu menang.</b> Hanya agent berstatus <i>Idle</i> yang boleh jalan-jalan. Berpikir / mengetik / approval / error / offline → agent kembali ke meja; yang urgent pakai <i>shunshin</i> (asap) &lt; 0,3 dtk.</div>
+    <div><b>Aktivitas idle.</b> Minum teh, baca gulungan di rak skill, lihat papan misi, lihat desa dari jendela, latihan di boneka kayu, jalan-jalan.</div>
+    <div><b>Sparring ninja.</b> Dua agent idle ke arena: salam → kuda-kuda → pukul/tangkis, tendangan, lompat, lempar shuriken (percikan) → salam. 15–25 dtk, maks 1 arena, cooldown per agent.</div>
+    <div><b>Papan nama selalu jujur.</b> “Idle · sparring” — aktivitas visual selalu ditulis di belakang status real, tidak pernah menggantikannya.</div>
+    <div><b>Genin.</b> Subagent keluar dari pintu Academy, berjalan (pathfinding, tidak tembus meja) ke samping meja induk, poof saat selesai.</div>
+    <div><b>Ringan.</b> Render berhenti saat halaman tidak terlihat; reduced-motion = pose statis; tanpa aset eksternal.</div>
+  </div>
+</section>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

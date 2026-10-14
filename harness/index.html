@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>shinobi-office harness</title>
+<style>
+  /* approximates Hermes Desktop dark theme vars so the page renders like in-app */
+  :root{--ui-text-primary:#E7E9EE;--ui-text-secondary:#B4B9C4;--ui-text-tertiary:#8A90A0;--ui-text-quaternary:#5C6270;--ui-stroke-secondary:#2C313C;--ui-accent:#6E8BFF;--ui-bg-elevated:#1A1D24}
+  html,body{margin:0;height:100%;background:#14161c;font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ui-text-primary)}
+  #root{height:100vh}
+  .btn{font:inherit;font-size:11px;border-radius:6px;padding:3px 8px;border:1px solid transparent;background:#2A3040;color:var(--ui-text-primary);cursor:pointer}
+  .btn-ghost{background:none;color:var(--ui-text-secondary)}
+  .btn-outline{background:none;border-color:var(--ui-stroke-secondary)}
+  .btn-default.btn-sm{background:var(--ui-accent);color:#fff}
+  code{font-size:11px}
+</style>
+<script>window.__mock = window.__mock || { profiles: [{ name: "default" }, { name: "kaito" }, { name: "hana" }, { name: "ren" }, { name: "tama" }, { name: "yuki" }] }; window.__SHINOBI_QA__ = true</script>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="./harness.js"></script>
+</body>
+</html>
